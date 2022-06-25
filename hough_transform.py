@@ -1,5 +1,5 @@
 import numpy as np
-import imageio
+import imageio.v2 as imageio
 import math
 
 def rgb2gray(rgb):
@@ -9,14 +9,12 @@ def rgb2gray(rgb):
 def hough_line(img, angle_step=1, lines_are_white=True, value_threshold=5):
     """
     Hough transform for lines
-
     Input:
     img - 2D binary image with nonzeros representing edges
     angle_step - Spacing between angles to use every n-th angle
                  between -90 and 90 degrees. Default step is 1.
     lines_are_white - boolean indicating whether lines to be detected are white
     value_threshold - Pixel values above or below the value_threshold are edges
-
     Returns:
     accumulator - 2D array of the hough transform accumulator
     theta - array of angles used in computation, in radians.
@@ -25,9 +23,7 @@ def hough_line(img, angle_step=1, lines_are_white=True, value_threshold=5):
     """
     # Rho and Theta ranges
     thetas = np.deg2rad(np.arange(-90.0, 90.0, angle_step))
-    #width, height = img.shape
-    width = 200000
-    height = 200000
+    width, height = img.shape
     diag_len = int(round(math.sqrt(width * width + height * height)))
     rhos = np.linspace(-diag_len, diag_len, diag_len * 2)
 
@@ -39,12 +35,8 @@ def hough_line(img, angle_step=1, lines_are_white=True, value_threshold=5):
     # Hough accumulator array of theta vs rho
     accumulator = np.zeros((2 * diag_len, num_thetas), dtype=np.uint8)
     # (row, col) indexes to edges
-    print('img',img)
     are_edges = img > value_threshold if lines_are_white else img < value_threshold
-    print('are_edges',are_edges)
     y_idxs, x_idxs = np.nonzero(are_edges)
-    print('y_idxs',y_idxs)
-    print('x_idxs',x_idxs)
 
     # Vote in the hough accumulator
     for i in range(len(x_idxs)):
@@ -112,10 +104,10 @@ def show_hough_line(img, accumulator, thetas, rhos, save_path=None):
     plt.show()
 
 
-if __name__ == '__main__':
-    imgpath = 'imgs/binary_crosses.png'
-    img = imageio.imread(imgpath)
-    if img.ndim == 3:
-        img = rgb2gray(img)
-    accumulator, thetas, rhos = hough_line(img)
-    show_hough_line(img, accumulator, thetas, rhos, save_path='imgs/output.png')
+# if __name__ == '__main__':
+#     imgpath = 'imgs/binary_crosses.png'
+#     img = imageio.imread(imgpath)
+#     if img.ndim == 3:
+#         img = rgb2gray(img)
+#     accumulator, thetas, rhos = hough_line(img)
+#     show_hough_line(img, accumulator, thetas, rhos, save_path='imgs/output.png')
